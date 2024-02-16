@@ -1,0 +1,10 @@
+[package]
+name = "rutils"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "mod.rs"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
