@@ -1,61 +1,75 @@
-use std::ops::Mul;
+use std::ops::{Add, Mul};
 
-pub fn sum(items: Vec<u64>) -> u64 {
-    let mut acc = 0;
+pub fn get_sum<T: Add<Output = T> + Clone>(items: &[T]) -> Option<T> {
+    let mut acc = None;
 
     for item in items {
-        acc += item;
+        if let Some(local_acc) = acc {
+            acc = Some(local_acc + item.clone())
+        } else {
+            acc = Some(item.clone())
+        }
     }
 
     acc
 }
 
-pub fn mul<N: Mul<Output = N>>(items: Vec<N>) -> N {
+pub fn get_product<T: Mul<Output = T> + Clone>(items: &[T]) -> Option<T> {
     let mut acc = None;
 
     for item in items {
-        if acc.is_none() {
-            acc = Some(item)
+        if let Some(local_acc) = acc {
+            let owned_item = item.clone();
+
+            acc = Some(local_acc * owned_item);
         } else {
-            acc = Some(acc.unwrap() * item);
+            acc = Some(item.clone())
         }
     }
 
-    acc.unwrap()
+    acc
 }
 
-pub fn min(items: Vec<u64>) -> u64 {
-    let mut lowest = items.first().unwrap().to_owned();
+pub fn min<T: PartialOrd + Clone>(items: &[T]) -> Option<T> {
+    let mut lowest = None;
 
     for item in items {
-        if item < lowest {
-            lowest = item
+        if let Some(local_lowest) = &lowest {
+            if item < local_lowest {
+                lowest = Some(item.clone())
+            }
+        } else {
+            lowest = Some(item.clone())
         }
     }
 
-    lowest.to_owned()
+    lowest
 }
 
-pub fn max(items: Vec<u64>) -> u64 {
-    let mut highest = items.first().unwrap().to_owned();
+pub fn max<T: PartialOrd + Clone>(items: &[T]) -> Option<T> {
+    let mut highest = None;
 
     for item in items {
-        if item > highest {
-            highest = item
+        if let Some(local_highest) = &highest {
+            if item > local_highest {
+                highest = Some(item.clone())
+            }
+        } else {
+            highest = Some(item.clone())
         }
     }
 
-    highest.to_owned()
+    highest
 }
 
-pub fn collect_numbers(input: Vec<String>) -> Vec<u64> {
+pub fn collect_numbers(input: &[String]) -> Vec<f64> {
     input
         .iter()
-        .map(|item| item.parse::<u64>().unwrap())
-        .collect::<Vec<u64>>()
+        .map(|item| item.parse::<f64>().unwrap())
+        .collect::<Vec<_>>()
 }
 
-pub fn sub_u64(a: u64, b: u64) -> u64 {
+pub fn safe_subtract_u64(a: u64, b: u64) -> u64 {
     if b > a {
         0
     } else {
@@ -63,7 +77,7 @@ pub fn sub_u64(a: u64, b: u64) -> u64 {
     }
 }
 
-pub fn sub_usize(a: usize, b: usize) -> usize {
+pub fn safe_subtract_usize(a: usize, b: usize) -> usize {
     if b > a {
         0
     } else {
@@ -71,7 +85,7 @@ pub fn sub_usize(a: usize, b: usize) -> usize {
     }
 }
 
-pub fn sub_u32(a: u32, b: u32) -> u32 {
+pub fn safe_subtract_u32(a: u32, b: u32) -> u32 {
     if b > a {
         0
     } else {
@@ -107,7 +121,7 @@ pub fn get_common_numbers(mut numbers: Vec<Vec<u64>>) -> Vec<u64> {
     common
 }
 
-pub fn least_common_multiple(numbers: Vec<u64>) -> u64 {
+pub fn least_common_multiple(numbers: &[u64]) -> u64 {
     let mut answer = numbers.get(0).unwrap().clone();
 
     for index in 1..numbers.len() {
