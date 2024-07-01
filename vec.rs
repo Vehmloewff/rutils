@@ -19,3 +19,17 @@ pub fn nest_vector<T>(vec: Vec<T>, every_n: usize) -> Vec<Vec<T>> {
 
     nested_vec
 }
+
+pub trait InnerPushVecExt<T> {
+    fn inner_push(&mut self, item: T);
+}
+
+impl<T> InnerPushVecExt<T> for Vec<Vec<T>> {
+    fn inner_push(&mut self, item: T) {
+        if self.is_empty() {
+            self.push(Vec::from([item]))
+        } else {
+            self.last_mut().unwrap().push(item)
+        }
+    }
+}
